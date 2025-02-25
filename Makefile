@@ -7,4 +7,4 @@ install:
 
 ## Run the FastAPI app locally
 run:
-	uvicorn main:app --reload --host 0.0.0.0 --port $(PORT)
+	uvicorn main:app --reload --host 127.0.0.1 --port $(PORT)

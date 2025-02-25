@@ -2,9 +2,9 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-@app.get("/")
+@app.get("/health")
 def read_root():
-    return {"message": "Hello, FastAPI!"}
+    return {"health": "I'm fine habibi."}
 
 if __name__ == "__main__":
     import uvicorn
