@@ -28,6 +28,4 @@ clean:
 	rmdir /s /q $(VENV)
 
 
-print:
-	@echo Hello, World!
 
