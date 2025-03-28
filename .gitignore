@@ -173,5 +173,8 @@ cython_debug/
 
 venv-backend
 
-uploads
 dummy_file.ipynb
+
+secrets.env
+
+launch.json
