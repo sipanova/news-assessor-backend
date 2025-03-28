@@ -81,6 +81,9 @@ async def process(
     if not file.filename.endswith('.csv'):
         return JSONResponse(content={"error": "Only CSV files are allowed!"}, status_code=400)
 
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+        
     # Define the path where the file will be saved
     file_location = os.path.join(UPLOAD_FOLDER, file.filename)
 
