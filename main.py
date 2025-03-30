@@ -3,10 +3,9 @@ import shutil
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
-# from email_service.gmail_sender import send_email_with_attachment
-from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks
-import smtplib
-from email.message import EmailMessage
+from fastapi import FastAPI, UploadFile, File, Form
+from helper_function import data_pre_processing
+
 
 load_dotenv('secrets.env')
 
@@ -43,6 +42,12 @@ async def process(
     with open(file_location, "wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 
+
+    try:
+        data_pre_processing(folder_name=UPLOAD_FOLDER, filename=file.filename)
+    except Exception as e:
+        return JSONResponse(content={"error while pre-processing: ": str(e)}, status_code=500)
+    
     try:
         return {
             "filename": file.filename,
@@ -50,7 +55,7 @@ async def process(
             "model": model
         }
     except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=500)
+        return JSONResponse(content={"error while returning the response: ": str(e)}, status_code=500)
     
 
 
