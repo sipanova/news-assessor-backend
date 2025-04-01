@@ -4,8 +4,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, Form
-from helper_function import data_pre_processing
+from helper_function import data_pre_processing, process_by_gpt_4o, process_by_llama_mini
 
+models = ['', '']
 
 load_dotenv('secrets.env')
 
@@ -30,7 +31,7 @@ async def process(
 
     # Check if the uploaded file is a CSV
     if not file.filename.endswith('.csv'):
-        return JSONResponse(content={"error": "Only CSV files are allowed!"}, status_code=400)
+        return JSONResponse(content={"Error": "Only CSV files are allowed!"}, status_code=400)
 
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
@@ -46,7 +47,23 @@ async def process(
     try:
         data_pre_processing(folder_name=UPLOAD_FOLDER, filename=file.filename)
     except Exception as e:
-        return JSONResponse(content={"error while pre-processing: ": str(e)}, status_code=500)
+        return JSONResponse(content={"Error while pre-processing: ": str(e)}, status_code=500)
+    
+
+    try:
+        print(f"Model: {model}")
+        match model:
+            case "GPT-4o":
+                print("case 1")
+                process_by_gpt_4o(folder_name=UPLOAD_FOLDER, filename=file.filename)
+            case "Llama-3.2-3B-Instruct":
+                print("case 2")
+                process_by_llama_mini()
+            case _:
+                print("case 0")
+                return JSONResponse(content={f"Unvalid model: {model}."}, status_code=500)
+    except Exception as e:
+        return JSONResponse(content={f"Error while processing using {model}: ": str(e)}, status_code=500)
     
     try:
         return {
