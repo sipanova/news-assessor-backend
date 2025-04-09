@@ -3,15 +3,17 @@ import shutil
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File, Form, Request
 from helper_function import data_pre_processing, process_by_gpt_4o, process_by_llama_mini
+import time
+import logging
 
 models = ['', '']
 
 load_dotenv('secrets.env')
 
 app = FastAPI()
-UPLOAD_FOLDER = "uploads"
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:4200"],  # Allow only your frontend origin
@@ -21,6 +23,7 @@ app.add_middleware(
 )
 
 
+UPLOAD_FOLDER = "uploads"
 
 @app.post("/process")
 async def process(
@@ -77,8 +80,8 @@ async def process(
 
 
 
-@app.get("/health")
-def read_root():
+@app.get("/")
+async def read_root():
     return {"health": "I'm fine habibi."}
 
 
