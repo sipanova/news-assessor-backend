@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from fastapi import FastAPI, UploadFile, File, Form, Request
-from helper_function import data_pre_processing, process_by_gpt_4o, process_by_llama_mini
+from helper_function import calcuate_execution_time, data_pre_processing, print_line, process_by_gpt_4o, process_by_llama_mini
 import time
 import logging
 
@@ -29,8 +29,9 @@ UPLOAD_FOLDER = "uploads"
 async def process(
     file: UploadFile = File(...),
     model: str = Form(...)
-    # email: str = Form(...)
 ):
+    start_time = time.time()
+    print_line()
 
     # Check if the uploaded file is a CSV
     if not file.filename.endswith('.csv'):
@@ -50,6 +51,7 @@ async def process(
     try:
         data_pre_processing(folder_name=UPLOAD_FOLDER, filename=file.filename)
     except Exception as e:
+        calcuate_execution_time(start_time)
         return JSONResponse(content={"Error while pre-processing: ": str(e)}, status_code=500)
     
 
@@ -66,9 +68,11 @@ async def process(
                 print("case 0")
                 return JSONResponse(content={f"Unvalid model: {model}."}, status_code=500)
     except Exception as e:
+        calcuate_execution_time(start_time)
         return JSONResponse(content={f"Error while processing using {model}: ": str(e)}, status_code=500)
     
     try:
+        calcuate_execution_time(start_time)
         return {
             "filename": file.filename,
             "message": "This is a test message.",
@@ -82,7 +86,10 @@ async def process(
 
 @app.get("/")
 async def read_root():
-    return {"health": "I'm fine habibi."}
+    start_time = time.time()
+    print_line()
+    calcuate_execution_time(start_time)
+    return {"health post": "I'm fine habibi."}
 
 
 
