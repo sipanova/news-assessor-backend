@@ -1,3 +1,4 @@
+from datetime import datetime
 import os
 import re
 import time
@@ -74,24 +75,18 @@ def process_by_gpt_4o(folder_name, filename):
 
     # Define question list
     questions = [
-        "Regarding Switzerland, what is the overall sentiment among the following possible answers (Very negative, Negative, Neutral, Positive, or Very positive, No sentiment)? Please do not provide explanation.",
-        
-        "Regarding nature dimension in Switzerland, what is the article about among the following possible answers (Nature Dimension not addressed, Landscape/scenery, Geography, Weather/climate, Preserved nature, Nature activities, Other aspect of Nature dimension)? Please do not provide explanation.",
-        "Regarding nature dimension in Switzerland, what is the sentiment among the following possible answers (Very negative, Negative, Neutral, Positive, Very positive, No sentiment)? Please do not provide explanation.",
-        
-        "Regarding functional dimension in Switzerland, what is the article about among the following possible answers (Functional Dimension not addressed, Education system, Science/innovation, Products, Economy, Infrastructure, Politics, Living/working conditions, Security, Other aspect of Functional dimension)? Please do not provide explanation.",
-        "Regarding functional dimension in Switzerland, what is the sentiment among the following possible answers (Very negative, Negative, Neutral, Positive, Very positive, No sentiment)? Please do not provide explanation.",
-        
-        "Regarding normative dimension in Switzerland, what is the article about among the following possible answers (Normative Dimension not addressed, Environmental protection, Freedom/human rights, Civil rights, International engagement, Ethical issues/scandals, Conflict avoidance, Tolerance/openness, Other aspect of Normative dimension)? Please do not provide explanation.",
-        "Regarding normative dimension in Switzerland, what is the sentiment among the following possible answers (Very negative, Negative, Neutral, Positive, Very positive, No sentiment)? Please do not provide explanation.",
-        
-        "Regarding cultural dimension in Switzerland, what is the article about among the following possible answers (Cultural Dimension not addressed, Sports, Food, Cultural offer, Personalities, Traditions, History, Cultural diversity, Other aspect of Culture dimension)? Please do not provide explanation.",
-        "Regarding cultural dimension in Switzerland, what is the sentiment among the following possible answers (Very negative, Negative, Neutral, Positive, Very positive, No sentiment)? Please do not provide explanation.",
-
-        "Among the following possible answers (No disinformation type, False connection, False context, Misleading content, Fabricated content, Manipulated content, Other disinformation type), is there disinformation in the article?",
-        "Among the following possible answers (No disinformation technique, Ad hominem attack, Emotional language, False dichotomies, Incoherence, Scapegoating, Other disinformation technique), what is the disinformation technique that is used if any?",
-        
-        "What is it about in short?"
+      "What is the overall sentiment regarding Switzerland? (Very negative, Negative, Neutral, Positive, Very positive)",
+      "Which aspect of the natural dimension is discussed? (Nature Dimension not addressed, Landscape/scenery, Geography, Weather/climate, Preserved nature, Nature activities, Other aspect of Nature dimension)",
+      "What is the sentiment toward the natural dimension? (Very negative, Negative, Neutral, Positive, Very positive, No Sentiment)",
+      "Which aspect of the functional dimension is discussed? (Functional Dimension not addressed, Education system, Science/innovation, Products, Economy, Infrastructure, Politics, Living/working conditions, Security, Other aspect of Functional dimension)",
+      "What is the sentiment toward the functional dimension? (Very negative, Negative, Neutral, Positive, Very positive, No Sentiment)",
+      "Which aspect of the normative dimension is discussed? (Normative Dimension not addressed, Environmental protection, Freedom/human rights, Civil rights, International engagement, Ethical issues/scandals, Conflict avoidance, Tolerance/openness, Other aspect of Normative dimension)",
+      "What is the sentiment toward the normative dimension? (Very negative, Negative, Neutral, Positive, Very positive, No Sentiment)",
+      "Which aspect of the cultural dimension is discussed? (Cultural Dimension not addressed, Sports, Food, Cultural offer, Personalities, Traditions, History, Cultural diversity, Other aspect of Culture dimension)",
+      "What is the sentiment toward the cultural dimension? (Very negative, Negative, Neutral, Positive, Very positive, No Sentiment)",
+      "Does the article contain disinformation? (No disinformation type, False connection, False context, Misleading content, Fabricated content, Manipulated content, Other disinformation type)",
+      "What disinformation technique is used, if any? (No disinformation technique, Ad hominem attack, Emotional language, False dichotomies, Incoherence, Scapegoating, Other disinformation technique)",
+      "What is the article about in short?"
     ]
 
     data['article_source'] = ''
@@ -117,7 +112,22 @@ def process_by_gpt_4o(folder_name, filename):
             data.at[index, 'article_source'] = 'extracted_content'
 
 
-        combined_prompt = f"Based on the following article, answer the questions:\n\nArticle: {article}\n\n"
+        combined_prompt = f"""
+        You are given an article about Switzerland. Read it carefully.
+
+        ARTICLE:
+        {article}
+
+        TASK:
+        Answer the following multiple-choice questions based only on the information in the article.
+
+        Instructions:
+        - Choose **only one** of the options provided for each question.
+        - Write only the selected option (e.g., "A", "B", "C", or "D").
+        - **Do not** explain your answer.
+
+        QUESTIONS:
+        """
         for i, question in enumerate(questions, 1):
             combined_prompt += f"{i}. {question}\n"
         
@@ -130,6 +140,12 @@ def process_by_gpt_4o(folder_name, filename):
         # Store answers in dataframe
         if len(answers) == len(columns):
             data.loc[index, columns] = answers
-
+    print(f"test_1")
+    data_count = len(data)
+    print(f"data_count: {data_count}")
+    now = datetime.now()
+    print(f"now: {now}")
+    timestamp = now.strftime("%Y-%m-%d_%H-%M-%S")
+    print(f"timestamp: {timestamp}")
     # data.to_json("final_file.json", orient="records", lines=True, force_ascii=False)
-    data.to_csv("uploads/final_file.csv", index=False, encoding='utf-8')
+    data.to_csv(f"uploads/final_file_GPT-4o_{data_count}_{timestamp}.csv", index=False, encoding='utf-8')

@@ -59,8 +59,10 @@ async def process(
         print(f"Model: {model}")
         match model:
             case "GPT-4o":
-                print("case 1")
-                process_by_gpt_4o(folder_name=UPLOAD_FOLDER, filename=file.filename)
+                for i in range(1):
+                    print("------------------------------------------------------")
+                    print(f"case: {i}") 
+                    process_by_gpt_4o(folder_name=UPLOAD_FOLDER, filename=file.filename)
             case "Llama-3.2-3B-Instruct":
                 print("case 2")
                 process_by_llama_mini()
