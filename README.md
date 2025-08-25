@@ -30,33 +30,27 @@ A simple FastAPI backend that does the following:
    git clone https://github.com/sipanova/news-assessor-backend.git
    cd news-assessor-backend
    ```
-
-2. (Optional) Create and activate a virtual environment:
+2. Create a `.env` file in the project root and add your OpenAI API key:
+   ```
+   OPENAI_API_KEY=your_api_key_here
+   ```
+3. Create and activate a virtual environment:
+   By executing the following in you terminal (from the makefile):
+   ```bash
+   make build-run
+   ```
+   Or if you want to run manually execute the following respecting the order:
    ```bash
    python -m venv venv
    source venv/bin/activate    # On macOS/Linux
    venv\Scripts\activate       # On Windows
-   ```
-
-3. Install dependencies:
-   ```bash
    pip install -r requirements.txt
    ```
 
 ---
 
-## Environment Variables
-
-Create a `.env` file in the project root and add your OpenAI API key:
-
-```
-OPENAI_API_KEY=your_api_key_here
-```
-
----
-
 ## Running the Application
-
+In case you go with manually building the app, you need to execute the following to run (not needed if you use ```make build-run```):
 Start the server with Uvicorn:
 
 ```bash
@@ -68,7 +62,6 @@ uvicorn main:app --reload
   ```bash
   uvicorn main:app --reload --port 8080
   ```
-
 ---
 
 ## Project Structure (Example)
