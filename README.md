@@ -17,6 +17,7 @@ A simple FastAPI backend that does the following:
 
 ## Requirements
 - Python 3.9+
+- an IDE like VSCode
 - [FastAPI](https://fastapi.tiangolo.com/)
 - [Uvicorn](https://www.uvicorn.org/)
 - [OpenAI Python SDK](https://github.com/openai/openai-python)
